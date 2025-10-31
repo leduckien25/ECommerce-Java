@@ -1,14 +1,33 @@
 package ecommerce.service;
 
 import ecommerce.entity.Order;
+import ecommerce.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
-public interface OrderService {
-    Order saveOrder(Order order);
+@Service
+public class OrderService {
 
-    List<Order> getAllOrders();
+    @Autowired
+    private OrderRepository orderRepository;
 
-    Order getOrderById(Long id);
+    public Order saveOrder(Order order) {
+        return orderRepository.save(order);
+    }
 
-    void deleteOrder(Long id);
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public Order getOrderById(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        return order.orElse(null);
+    }
+
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
+    }
 }

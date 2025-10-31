@@ -3,20 +3,52 @@ package ecommerce.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
 import ecommerce.entity.Category;
+import ecommerce.repository.CategoryRepository;
 
-public interface CategoryService {
+@Service
+public class CategoryService {
 
-	public Category saveCategory(Category category);
+	@Autowired
+	private CategoryRepository categoryRepository;
 
-	boolean existCategory(String categoryName);
+	public Category saveCategory(Category category) {
+		// TODO Auto-generated method stub
+		return categoryRepository.save(category);
+	}
 
-	public Boolean deleteCategory(long id);
+	public boolean existCategory(String categoryName) {
+		return categoryRepository.existsByCategoryName(categoryName);
+	}
 
-	public Optional<Category> findById(long id);
+	public Boolean deleteCategory(long id) {
+		// TODO Auto-generated method stub
 
-	public Optional<Category> findByName(String name);
+		Category categoryFound = categoryRepository.findById(id).orElse(null);
 
-	List<Category> findAll();
+		if (!ObjectUtils.isEmpty(categoryFound)) {
+			categoryRepository.delete(categoryFound);
+			return true;
+		}
+
+		return false;
+	}
+
+	public Optional<Category> findById(long id) {
+		// TODO Auto-generated method stub
+		return categoryRepository.findById(id);
+	}
+
+	public List<Category> findAll() {
+		return categoryRepository.findAll();
+	}
+
+	public Optional<Category> findByName(String name) {
+		return categoryRepository.findByCategoryName(name);
+	}
 
 }
