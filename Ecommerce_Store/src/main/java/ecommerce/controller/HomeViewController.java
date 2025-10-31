@@ -44,6 +44,8 @@ public class HomeViewController {
 
 		if (category.isEmpty()) {
 			allProducts = productService.findAll();
+		} else if (category.equals("Other")) {
+			allProducts = productService.findAllWithoutCategory();
 		} else {
 			var optionalCategory = categoryService.findByName(category);
 			if (optionalCategory.isPresent()) {

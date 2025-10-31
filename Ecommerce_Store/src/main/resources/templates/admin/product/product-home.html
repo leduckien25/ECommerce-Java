@@ -4,6 +4,11 @@
 <section>
 	<div class="container-fluid p-5">
 		<div class="row">
+			<div class="col-md-4">
+				<a th:href="@{'/admin/add-product'}" class="btn btn-primary mb-3">Add Product</a>
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-md-12">
 				<div class="card custom-card-shadow">
 					<div class="card-header text-center fs-4">List of Products</div>
@@ -24,7 +29,7 @@
 							<tbody>
 								<tr th:each="product, count : ${productList}">
 									<th scope="row">[[${count.count}]]</th>
-									<td><img th:src="@{'/img/product_image/'+${product.productImage}}" width="50px;"
+									<td><img th:src="@{'/images/'+${product.productImage}}" width="50px;"
 											height="50px;"></td>
 									<td>[[${product.productName}]]</td>
 									<td

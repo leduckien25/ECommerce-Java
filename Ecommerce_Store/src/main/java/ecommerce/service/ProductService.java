@@ -31,6 +31,10 @@ public class ProductService {
 		return productRepository.findAll();
 	}
 
+	public List<Product> findAllWithoutCategory() {
+		return productRepository.findAllWithoutCategory();
+	}
+
 	public Boolean deleteProduct(long id) {
 		Optional<Product> product = productRepository.findById(id);
 		if (product.isPresent()) {
@@ -42,20 +46,18 @@ public class ProductService {
 
 	}
 
-	public Optional<Product> findById(long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
-
 	public Product getProductById(long id) {
-		// TODO Auto-generated method stub
-		return productRepository.findById(id).orElse(null);
+		return productRepository.findByIdWithCategory(id).orElse(null);
 	}
 
-	public Product updateProductById(Product product, MultipartFile file) {
+	public Product updateProduct(Product product, MultipartFile file) {
 		Product dbProductById = getProductById(product.getId());
+		String oldImageName = dbProductById.getProductImage();
 
-		String imageName = file.isEmpty() ? dbProductById.getProductImage() : file.getOriginalFilename();
+		String imageName = (file == null || file.isEmpty())
+				? oldImageName
+				: file.getOriginalFilename();
+
 		dbProductById.setProductImage(imageName);
 		dbProductById.setProductName(product.getProductName());
 		dbProductById.setProductDescription(product.getProductDescription());
@@ -65,24 +67,36 @@ public class ProductService {
 
 		Product updatedProduct = productRepository.save(dbProductById);
 
-		if (!ObjectUtils.isEmpty(updatedProduct)) {
-			if (!file.isEmpty()) {
-				try {
+		if (updatedProduct != null && file != null && !file.isEmpty()) {
+			try {
+				// ✅ Store outside classpath (recommended)
+				String uploadDir = System.getProperty("user.dir") + "/uploads/product_image";
 
-					File savefile = new ClassPathResource("static/img").getFile();
-					Path path = Paths.get(savefile.getAbsolutePath() + File.separator + "product_image" + File.separator
-							+ file.getOriginalFilename());
-					System.out.println("File save Path :" + path);
-					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-				} catch (Exception e) {
-					e.printStackTrace();
+				Path imageDir = Paths.get(uploadDir);
+				if (!Files.exists(imageDir)) {
+					Files.createDirectories(imageDir);
 				}
-			}
 
-			return updatedProduct;
+				// Delete old image
+				if (oldImageName != null && !oldImageName.isEmpty()) {
+					Path oldImagePath = imageDir.resolve(oldImageName);
+					if (Files.exists(oldImagePath)) {
+						Files.delete(oldImagePath);
+						System.out.println("Deleted old image: " + oldImagePath);
+					}
+				}
+
+				// Save new image
+				Path newImagePath = imageDir.resolve(file.getOriginalFilename());
+				Files.copy(file.getInputStream(), newImagePath, StandardCopyOption.REPLACE_EXISTING);
+				System.out.println("Saved new image: " + newImagePath);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		return null;
+
+		return updatedProduct;
 	}
 
 	public List<Product> findAllProductsByCategoryId(Long categoryId) {
@@ -94,6 +108,10 @@ public class ProductService {
 		}
 
 		return products;
+	}
+
+	public Optional<Product> getProductByIdWithCategory(Long productId) {
+		return productRepository.findByIdWithCategory(productId);
 	}
 
 }

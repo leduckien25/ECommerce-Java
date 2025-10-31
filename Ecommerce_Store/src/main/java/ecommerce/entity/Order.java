@@ -15,7 +15,7 @@ public class Order {
     private String phoneNumber;
     private String shippingAddress;
     private String paymentMethod;
-    private String Status;
+    private String Status = "Pending";
 
     public String getStatus() {
         return Status;

@@ -14,25 +14,25 @@
 				<div class="card custom-card-shadow">
 					<div class="card-header text-center fs-4">List of Category</div>
 					<div class="card-body">
-						<table id="categoryTable" class="display" cellspacing="0" width="100%">
+						<table cellspacing="0" width="100%">
 							<thead>
 								<tr>
 									<th scope="col">ID</th>
 									<th scope="col">Category</th>
 									<th scope="col">Description</th>
-									<th scope="col">Actions</th>
+									<th scope="col"> Actions</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="category, count: ${allCategoryList}">
+								<tr th:each="category: ${allCategoryList}" class="border-top">
 									<td th:text="${category.id}"></td>
 									<td th:text="${category.categoryName}"></td>
 									<td th:text="${category.categoryDescription}"></td>
 									<td>
-										&nbsp; <a th:href="@{'/admin/edit-category/'+${category.id}}"
+										<a th:href="@{'/admin/edit-category/'+${category.id}}"
 											class="btn btn-info btn-sm"><i
-												class="fa-solid fa-pen-to-square text-decoration-none"></i></a>&nbsp;
-										&nbsp;
+												class="fa-solid fa-pen-to-square text-decoration-none"></i></a>;
+
 										<a th:href="@{'/admin/delete-category/'+${category.id}}"
 											class="btn btn-danger btn-sm"
 											onclick="return confirm('Are you sure want to delete this?');"><i

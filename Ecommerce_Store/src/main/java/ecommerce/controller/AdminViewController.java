@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+
 import ecommerce.entity.Category;
 import ecommerce.entity.Product;
 import ecommerce.service.CategoryService;
@@ -39,13 +41,15 @@ public class AdminViewController {
 	ProductService productService;
 
 	@GetMapping({ "", "/" })
-	public String adminIndex() {
+	public String adminIndex(Model model) {
+		model.addAttribute("allCategory", categoryService.findAll());
 
 		return "admin/dashboard";
 	}
 
 	@GetMapping("/add-category")
 	public String addCategory(Model model) {
+		model.addAttribute("allCategory", categoryService.findAll());
 
 		return "admin/category/category-add-form";
 	}
@@ -60,16 +64,16 @@ public class AdminViewController {
 
 	@GetMapping("/category")
 	public String category(Model model) {
-		List<Category> allCategories = categoryService.findAll();
-		System.out.println("category: " + allCategories.toString());
-
-		model.addAttribute("allCategoryList", allCategories);
+		model.addAttribute("allCategory", categoryService.findAll());
+		model.addAttribute("allCategoryList", categoryService.findAll());
 
 		return "/admin/category/category-home";
 	}
 
 	@GetMapping("/edit-category/{id}")
 	public String editCategoryForm(@PathVariable("id") long id, Model model) {
+		model.addAttribute("allCategory", categoryService.findAll());
+
 		Optional<Category> categoryObj = categoryService.findById(id);
 		if (categoryObj.isPresent()) {
 			Category category = categoryObj.get();
@@ -89,7 +93,9 @@ public class AdminViewController {
 	}
 
 	@GetMapping("/delete-category/{id}")
-	public String deleteCategory(@PathVariable("id") long id, HttpSession session) {
+	public String deleteCategory(@PathVariable("id") long id, Model model) {
+		model.addAttribute("allCategory", categoryService.findAll());
+
 		Boolean deleteCategory = categoryService.deleteCategory(id);
 
 		return "redirect:/admin/category";
@@ -97,17 +103,22 @@ public class AdminViewController {
 
 	@GetMapping("/add-product")
 	public String addProduct(Model model) {
-		List<Category> allCategories = categoryService.findAll();
-		model.addAttribute("allCategoryList", allCategories);
+		model.addAttribute("allCategory", categoryService.findAll());
+
 		return "/admin/product/add-product";
 	}
 
 	@PostMapping("/save-product")
-	public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile file,
-			HttpSession session) throws IOException {
+	public String saveProduct(@ModelAttribute Product product, @RequestParam("categoryId") Long categoryId,
+			@RequestParam("file") MultipartFile file)
+			throws IOException {
 		String imageName = file != null ? file.getOriginalFilename() : "default.png";
 
 		product.setProductImage(imageName);
+
+		if (categoryId != -1) {
+			product.setCategory(categoryService.findById(categoryId).get());
+		}
 
 		Product saveProduct = productService.saveProduct(product);
 
@@ -117,18 +128,16 @@ public class AdminViewController {
 					.get(savefile.getAbsolutePath() + File.separator + "product_image" + File.separator + imageName);
 			System.out.println("File save Path :" + path);
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			session.setAttribute("successMsg", "Product Save Successfully.");
-		} else {
-			session.setAttribute("errorMsg", "Something Wrong on server while save Product");
-			// System.out.println("Something Wrong on server while save Product");
 		}
 
-		return "redirect:/admin/product-list";
+		return "redirect:/admin/product";
 	}
 
 	@GetMapping("/product")
 	public String productList(Model model) {
 		model.addAttribute("productList", productService.findAll());
+		model.addAttribute("allCategory", categoryService.findAll());
+
 		return "/admin/product/product-home";
 	}
 
@@ -141,7 +150,7 @@ public class AdminViewController {
 		} else {
 			session.setAttribute("errorMsg", "Something Wrong on server while deleting Product");
 		}
-		return "redirect:/admin/product-list";
+		return "redirect:/admin/product";
 
 	}
 
@@ -154,18 +163,23 @@ public class AdminViewController {
 	}
 
 	@PostMapping("/update-product")
-	public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile file,
-			HttpSession session, Model model) {
+	public String updateProduct(@ModelAttribute Product product,
+			@RequestParam("categoryId") Long categoryId, @RequestParam("file") MultipartFile file) {
 
-		Product updateProduct = productService.updateProductById(product, file);
-		if (!ObjectUtils.isEmpty(updateProduct)) {
-			session.setAttribute("successMsg", "Product Updated Successfully.");
-		} else {
-			session.setAttribute("errorMsg", "Something Wrong on server while deleting Product");
+		if (categoryId != -1) {
+			var category = categoryService.findById(categoryId);
+			if (category != null) {
+				product.setCategory(category.get());
+			}
 		}
+		Product updateProduct = productService.updateProduct(product, file);
 
-		// return "redirect:/admin/product/edit-product";
-		return "redirect:/admin/product-list";
+		return "redirect:/admin/product";
 	}
 
+	@GetMapping("/order")
+	public String order(Model model) {
+		model.addAttribute("allCategory", categoryService.findAll());
+		return "/admin/order/order-home";
+	}
 }

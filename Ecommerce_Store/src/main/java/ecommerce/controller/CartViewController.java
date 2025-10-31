@@ -10,6 +10,7 @@ import ecommerce.service.CategoryService;
 import ecommerce.service.OrderService;
 import ecommerce.service.ProductService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -89,6 +90,7 @@ public class CartViewController {
     }
 
     @PostMapping("/checkout")
+    @Transactional
     public String processCheckout(HttpSession session,
             @RequestParam String shippingAddress,
             @RequestParam String paymentMethod,
@@ -131,6 +133,16 @@ public class CartViewController {
         order.setOrderDetails(orderDetails);
 
         orderService.saveOrder(order);
+
+        for (OrderDetail detail : orderDetails) {
+            int quantity = detail.getQuantity();
+            Product product = productService.getProductByIdWithCategory(detail.getProductId()).get();
+            int newStock = Math.max(0, product.getProductStock() - detail.getQuantity());
+
+            product.setProductStock(newStock);
+
+            productService.updateProduct(product, null);
+        }
 
         if (checkoutItem == null) {
             cartService.clearCart();

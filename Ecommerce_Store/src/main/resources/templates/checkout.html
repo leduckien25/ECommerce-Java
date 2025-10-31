@@ -28,8 +28,8 @@
                             <tr th:each="item : ${cart}">
                                 <td th:text="${item.productName}"></td>
                                 <td>
-                                    <img th:src="@{${item.imageUrl}}" alt="Product Image" class="img-thumbnail"
-                                        style="width: 60px; height: 60px;">
+                                    <img th:src="@{'/images/'+${item.imageUrl}}" alt="Product Image"
+                                        class="img-thumbnail" style="width: 60px; height: 60px;">
                                 </td>
                                 <td th:text="${item.productPrice}"></td>
                                 <td th:text="${item.quantity}"></td>
