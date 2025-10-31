@@ -38,7 +38,7 @@ public class AdminViewController {
 	@Autowired
 	ProductService productService;
 
-	@GetMapping("/")
+	@GetMapping({ "", "/" })
 	public String adminIndex() {
 
 		return "admin/dashboard";
@@ -51,39 +51,15 @@ public class AdminViewController {
 	}
 
 	@PostMapping("/save-category")
-	public String saveCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file,
-			HttpSession session) throws IOException {
+	public String saveCategory(@ModelAttribute Category category) {
 
-		String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
-		category.setCategoryImage(imageName);
-
-		if (categoryService.existCategory(category.getCategoryName())) {
-			session.setAttribute("errorMsg", "Category Name already Exists");
-		} else {
-			Category saveCategory = categoryService.saveCategory(category);
-
-			if (ObjectUtils.isEmpty(saveCategory)) {
-				session.setAttribute("errorMsg", "Not Saved! Internal Server Error!");
-			} else {
-
-				File saveFile = new ClassPathResource("static/img").getFile();
-				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-						+ file.getOriginalFilename());
-				System.out.println("File save Path :" + path);
-
-				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-				// set Suceesss Msg to Session
-				session.setAttribute("successMsg", "Category Save Successfully.");
-			}
-
-		}
+		Category saveCategory = categoryService.saveCategory(category);
 
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/category")
 	public String category(Model model) {
-		System.out.println("category:WWWWWWWWW");
 		List<Category> allCategories = categoryService.findAll();
 		System.out.println("category: " + allCategories.toString());
 
@@ -94,53 +70,20 @@ public class AdminViewController {
 
 	@GetMapping("/edit-category/{id}")
 	public String editCategoryForm(@PathVariable("id") long id, Model model) {
-		// System.out.println("ID :"+id);
 		Optional<Category> categoryObj = categoryService.findById(id);
 		if (categoryObj.isPresent()) {
 			Category category = categoryObj.get();
 			model.addAttribute("category", category);
+			return "/admin/category/category-edit-form";
+
 		} else {
-			System.out.println("ELSEEEEE");
+			return "redirect:/admin/category";
 		}
-		return "/admin/category/category-edit-form";
 	}
 
 	@PostMapping("/update-category")
-	public String udateCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file,
-			HttpSession session) throws IOException {
-		System.out.println("Category for UPDATE :" + category.toString());
-
-		Optional<Category> categoryById = categoryService.findById(category.getId());
-		System.out.println("Category obj" + categoryById.toString());
-
-		if (categoryById.isPresent()) {
-			System.out.println("Present:");
-			Category oldCategory = categoryById.get();
-			System.out.println("Category old Obj " + oldCategory.toString());
-			oldCategory.setCategoryName(category.getCategoryName());
-
-			String imageName = file.isEmpty() ? oldCategory.getCategoryImage() : file.getOriginalFilename();
-			oldCategory.setCategoryImage(imageName);
-
-			Category updatedCategory = categoryService.saveCategory(oldCategory);
-
-			if (!ObjectUtils.isEmpty(updatedCategory)) {
-				// save File
-				if (!file.isEmpty()) {
-					File saveFile = new ClassPathResource("static/img").getFile();
-					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-							+ file.getOriginalFilename());
-					System.out.println("File Update path: " + path);
-					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-				}
-
-				session.setAttribute("successMsg", "Category Updated Successfully");
-			} else {
-				session.setAttribute("errorMsg", "Something wrong on server!");
-			}
-		} else {
-			System.out.println("Not Present:");
-		}
+	public String udateCategory(@ModelAttribute Category category) {
+		Category updateCategory = categoryService.saveCategory(category);
 
 		return "redirect:/admin/category";
 	}
@@ -148,16 +91,9 @@ public class AdminViewController {
 	@GetMapping("/delete-category/{id}")
 	public String deleteCategory(@PathVariable("id") long id, HttpSession session) {
 		Boolean deleteCategory = categoryService.deleteCategory(id);
-		if (deleteCategory) {
-			session.setAttribute("successMsg", "Category Deleted Successfully");
-		} else {
-			session.setAttribute("errorMsg", "Server Error");
-		}
 
 		return "redirect:/admin/category";
 	}
-
-	// PRODUCT-MODULE-START
 
 	@GetMapping("/add-product")
 	public String addProduct(Model model) {
@@ -190,10 +126,10 @@ public class AdminViewController {
 		return "redirect:/admin/product-list";
 	}
 
-	@GetMapping("/product-list")
+	@GetMapping("/product")
 	public String productList(Model model) {
 		model.addAttribute("productList", productService.findAll());
-		return "/admin/product/product-list";
+		return "/admin/product/product-home";
 	}
 
 	@GetMapping("/delete-product/{id}")

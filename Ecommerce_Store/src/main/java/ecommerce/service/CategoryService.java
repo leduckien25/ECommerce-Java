@@ -17,7 +17,6 @@ public class CategoryService {
 	private CategoryRepository categoryRepository;
 
 	public Category saveCategory(Category category) {
-		// TODO Auto-generated method stub
 		return categoryRepository.save(category);
 	}
 

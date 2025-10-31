@@ -12,7 +12,15 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String categoryName;
-	private String categoryImage;
+	private String categoryDescription;
+
+	public String getCategoryDescription() {
+		return categoryDescription;
+	}
+
+	public void setCategoryDescription(String categoryDescription) {
+		this.categoryDescription = categoryDescription;
+	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -22,19 +30,11 @@ public class Category {
 		this.categoryName = categoryName;
 	}
 
-	public void setCategoryImage(String categoryImage) {
-		this.categoryImage = categoryImage;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
 	public String getCategoryName() {
 		return categoryName;
-	}
-
-	public String getCategoryImage() {
-		return categoryImage;
 	}
 }

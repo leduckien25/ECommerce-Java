@@ -15,6 +15,16 @@ public class Order {
     private String phoneNumber;
     private String shippingAddress;
     private String paymentMethod;
+    private String Status;
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
+    }
+
     private double totalAmount;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
