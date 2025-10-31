@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<section>
+    <div class="container mt-5">
+        <h2 class="mb-4">Your Cart</h2>
+
+        <div th:if="${cart.isEmpty()}">
+            <p>Your cart is empty.</p>
+            <a href="/" class="btn btn-primary">Continue Shopping</a>
+        </div>
+
+        <div th:if="${!cart.isEmpty()}">
+            <div class="row">
+                <div class="col-md-8">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Image</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${cart}">
+                                <td>
+                                    <img th:src="@{${item.imageUrl}}" alt="Product" class="img-thumbnail"
+                                        style="width:60px; height:60px;">
+                                </td>
+                                <td th:text="${item.productName}"></td>
+                                <td th:text="${item.quantity}"></td>
+                                <td th:text="${item.productPrice}"></td>
+                                <td th:text="${#numbers.formatDecimal(item.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                                <td>
+                                    <form th:action="@{/cart/remove}" method="post">
+                                        <input type="hidden" name="productId" th:value="${item.productId}" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card p-3 border-0 shadow">
+                        <h5>Order Summary</h5>
+                        <p>Total Items: <span th:text="${cart.size()}"></span></p>
+                        <p>Total Amount: <span
+                                th:text="${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}"></span></p>
+                        <a href="/checkout" class="btn btn-success w-100 mb-2">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</html>

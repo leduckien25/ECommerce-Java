@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<section>
+    <div class="container mt-5">
+        <h2 class="mb-4">Checkout</h2>
+
+        <div th:if="${cart.isEmpty()}">
+            <p>Your cart is empty.</p>
+            <a href="/" class="btn btn-primary">Continue Shopping</a>
+        </div>
+
+        <div th:if="${!cart.isEmpty()}">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Cart Summary</h4>
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${cart}">
+                                <td th:text="${item.productName}"></td>
+                                <td>
+                                    <img th:src="@{${item.imageUrl}}" alt="Product Image" class="img-thumbnail"
+                                        style="width: 60px; height: 60px;">
+                                </td>
+                                <td th:text="${item.productPrice}"></td>
+                                <td th:text="${item.quantity}"></td>
+                                <td th:text="${item.total}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h5>
+                        <p>Total Amount: <span
+                                th:text="${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}"></span></p>
+                    </h5>
+                </div>
+
+                <!-- Right Column: Checkout Form -->
+                <div class="col-md-4">
+                    <h4>Shipping & Payment</h4>
+                    <form th:action="@{/checkout}" method="post">
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Full Name</label>
+                            <br>
+                            <input type="text" name="customerName" class="form-control col-md-12">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Phone Number</label>
+                            <br>
+                            <input type="text" name="phoneNumber" class="form-control col-md-12">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Shipping Address</label>
+                            <br>
+                            <textarea class="col-md-12 form-control" id="address" name="shippingAddress"
+                                rows="4"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-control" id="paymentMethod" name="paymentMethod" required>
+                                <option value="cod">Cash on Delivery</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Place Order</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

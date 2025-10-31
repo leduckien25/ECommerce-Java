@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<section>
+	<div class="container custom-card-shadow" style="margin-top: 60px; margin-bottom: 90px;">
+		<div class="row">
+			<div class="col-md-12 p-5">
+				<div class="row">
+					<!-- Product Image -->
+					<div class="col-md-6 text-center">
+						<img alt="product_image" th:src="@{'/img/product_image/' + ${product.productImage}}"
+							width="330px" height="400px">
+					</div>
+
+					<!-- Product Details -->
+					<div class="col-md-6">
+						<p class="fs-3 fw-bold">[[${product.productName}]]</p>
+						<p class="fs-6">
+							Status:
+							<th:block th:if="${product.productStock > 0}">
+								<span class="badge bg-success">Available</span><br>
+							</th:block>
+							<th:block th:unless="${product.productStock > 0}">
+								<span class="badge bg-warning">Out of Stock</span><br>
+							</th:block>
+
+							Category: <span>[[${product.category.categoryName}]]</span> <br>
+							Policy: 7 Days Replacement & Return
+						</p>
+
+						<!-- Price -->
+						<p class="fs-3 fw-bold mt-3">
+							Price:
+							<span class="fs-2 text-secondary">
+								$ [[${#numbers.formatDecimal(product.productPrice, 0, 'COMMA', 2, 'POINT')}]]
+							</span>
+						</p>
+
+						<!-- Features -->
+						<div class="row mt-3">
+							<div class="col-md-4 text-primary text-center py-2">
+								<i class="fa-solid fa-wallet fa-lg"></i>
+								<p class="mb-0 small">Cash On Delivery</p>
+							</div>
+							<div class="col-md-4 text-warning text-center py-2">
+								<i class="fa-solid fa-rotate-left fa-lg"></i>
+								<p class="mb-0 small">Return Available</p>
+							</div>
+							<div class="col-md-4 text-success text-center py-2">
+								<i class="fa-solid fa-truck-fast fa-lg"></i>
+								<p class="mb-0 small">Free Shipping</p>
+							</div>
+						</div>
+
+
+						<form th:action="@{/cart/action}" method="post" class="mt-3">
+							<input type="hidden" name="productId" th:value="${product.id}" />
+
+							<div class="mb-3 d-flex align-items-center gap-2">
+								<label for="quantity" class="fw-bold mb-0">Quantity:</label>
+								<input type="number" id="quantity" name="quantity" th:value="1" min="1"
+									th:attr="max=${product.productStock}" class="form-control w-auto text-center">
+								<span th:text="'(Max: ' + ${product.productStock} + ')'"></span>
+							</div>
+
+							<div class="d-flex gap-2">
+								<th:block th:if="${product.productStock > 0}">
+									<button type="submit" name="action" value="buy-now"
+										class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+										Buy Now
+									</button>
+
+									<button type="submit" name="action" value="add-to-cart"
+										class="btn btn-danger flex-fill py-2 rounded-pill fw-bold">
+										Add to Cart
+									</button>
+								</th:block>
+								<th:block th:unless="${product.productStock > 0}">
+									<button type="button" class="btn btn-secondary flex-fill py-2 rounded-pill fw-bold"
+										disabled>
+										Out of Stock
+									</button>
+								</th:block>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+
+				<!-- Product Description -->
+				<div class="mt-4">
+					<p>
+						<span class="fw-bold">Description:</span><br>
+						[[${product.productDescription}]]
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+</html>
