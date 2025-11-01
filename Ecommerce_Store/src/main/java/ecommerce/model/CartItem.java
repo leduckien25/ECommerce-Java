@@ -5,8 +5,12 @@ public class CartItem {
     private String productName;
     private double productPrice;
     private int quantity;
-    private double price;
     private String imageUrl;
+    private double total;
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
     public Long getProductId() {
         return productId;
@@ -40,14 +44,6 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -57,6 +53,6 @@ public class CartItem {
     }
 
     public double getTotal() {
-        return quantity * price;
+        return total;
     }
 }

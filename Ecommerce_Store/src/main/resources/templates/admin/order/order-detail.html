@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<section>
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-semibold mb-0">
+                <i class="bi bi-receipt-cutoff me-2 text-primary"></i> Order details
+            </h3>
+        </div>
+        <form method="post" th:action="'/admin/order/update/'+${order.id}">
+            <div class="card border-0 shadow-sm rounded-3 p-4 mb-4">
+                <dl class="row mb-0">
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Customer</dt>
+                    <dd class="col-md-9 col-sm-8" th:text="${order.customerName}"></dd>
+
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Status</dt>
+                    <dd class="col-md-9 col-sm-8">
+
+                        <select class="border-0 shadow-sm rounded-2" name="newStatus">
+                            <option value="Pending" th:selected="${order.status == 'Pending'}">Pending</option>
+                            <option value="Paid" th:selected="${order.status == 'Paid'}">Paid</option>
+                            <option value="Cancelled" th:selected="${order.status == 'Cancelled'}">Cancelled</option>
+                        </select>
+                    </dd>
+
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Phone</dt>
+                    <dd class="col-md-9 col-sm-8" th:text="${order.phoneNumber}"></dd>
+
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Address</dt>
+                    <dd class="col-md-9 col-sm-8" th:text="${order.shippingAddress}"></dd>
+
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Total Amount</dt>
+                    <dd class="col-md-9 col-sm-8 text-success fw-bold fs-5" th:text="${order.totalAmount}" dd>
+                </dl>
+            </div>
+
+            <div class=" card rounded-3 overflow-hidden shadow-sm mb-3">
+                <table class="table table-borderless m-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="detail : ${order.orderDetails}">
+                            <td th:text="${detail.productName}"></td>
+                            <td th:text="${#numbers.formatDecimal(detail.productPrice, 2, 2)}"></td>
+                            <td th:text="${detail.quantity}"></td>
+                            <td th:text="${#numbers.formatDecimal(detail.quantity * detail.productPrice, 2, 2)}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-start">
+                <a href="/dashboard/order" class="btn btn-secondary">Cancel</a>
+                <button id="btn-save" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</section>

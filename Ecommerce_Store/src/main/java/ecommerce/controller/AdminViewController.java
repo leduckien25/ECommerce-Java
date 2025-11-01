@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-
 import ecommerce.entity.Category;
+import ecommerce.entity.OrderDetail;
 import ecommerce.entity.Product;
 import ecommerce.service.CategoryService;
+import ecommerce.service.OrderService;
 import ecommerce.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 
@@ -39,6 +38,9 @@ public class AdminViewController {
 
 	@Autowired
 	ProductService productService;
+
+	@Autowired
+	OrderService orderService;
 
 	@GetMapping({ "", "/" })
 	public String adminIndex(Model model) {
@@ -180,6 +182,26 @@ public class AdminViewController {
 	@GetMapping("/order")
 	public String order(Model model) {
 		model.addAttribute("allCategory", categoryService.findAll());
+		model.addAttribute("AllOrderList", orderService.findAll());
 		return "/admin/order/order-home";
+	}
+
+	@GetMapping("/order/{id}")
+	public String detailOrder(Model model, @PathVariable long id) {
+		var order = orderService.getOrderById(id);
+
+		model.addAttribute("order", order);
+		model.addAttribute("allCategory", categoryService.findAll());
+		return "/admin/order/order-detail";
+	}
+
+	@PostMapping("/order/update/{id}")
+	public String updateOrder(@RequestParam String newStatus, @PathVariable long id) {
+		var oldOrder = orderService.getOrderById(id);
+
+		oldOrder.setStatus(newStatus);
+
+		orderService.saveOrder(oldOrder);
+		return "redirect:/admin/order";
 	}
 }

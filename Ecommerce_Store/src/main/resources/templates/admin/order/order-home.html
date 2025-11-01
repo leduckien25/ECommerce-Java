@@ -2,5 +2,60 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
 
 <section>
-    <h2>This is order page</h2>
+    <div class="container-fluid p-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card custom-card-shadow">
+                    <div class="card-header text-center fs-4">List of Order</div>
+                    <div class="card-body">
+                        <table cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">shipping Address</th>
+                                    <th scope="col"> Payment Method</th>
+                                    <th scope="col">Total Amount</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order: ${AllOrderList}" class="border-top" th:data-id="${order.id}">
+                                    <td th:text="${order.id}"></td>
+                                    <td th:text="${order.customerName}"></td>
+                                    <td th:text="${order.phoneNumber}"></td>
+                                    <td th:text="${order.shippingAddress}"></td>
+                                    <td th:text="${order.paymentMethod}"></td>
+                                    <td th:text="${order.totalAmount}"></td>
+                                    <td>
+                                        <span th:switch="${order.status}">
+                                            <span th:case="'Pending'" class="badge bg-warning text-dark">Pending</span>
+                                            <span th:case="'Paid'" class="badge bg-success">Paid</span>
+                                            <span th:case="'Cancelled'" class="badge bg-danger">Cancelled</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('tbody tr').hover(function () {
+                $(this).css('background-color', '#f8f9fa');
+            }, function () {
+                $(this).css('background-color', '');
+            });
+
+            $('tbody tr').click(function () {
+                var id = $(this).attr('data-id');
+                window.location.href = '/admin/order/' + id;
+            });
+        });
+    </script>
 </section>

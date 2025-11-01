@@ -13,6 +13,7 @@ import ecommerce.entity.Category;
 import ecommerce.entity.Product;
 import ecommerce.service.CategoryService;
 import ecommerce.service.ProductService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeViewController {
@@ -23,7 +24,8 @@ public class HomeViewController {
 	CategoryService categoryService;
 
 	@GetMapping("/")
-	public String homeIndex(Model model) {
+	public String homeIndex(Model model, HttpSession session) {
+		session.removeAttribute("checkoutItem");
 
 		List<Category> allCategory = categoryService.findAll();
 
@@ -37,7 +39,9 @@ public class HomeViewController {
 	}
 
 	@GetMapping("/products")
-	public String product(Model model, @RequestParam(name = "category", defaultValue = "") String category) {
+	public String product(Model model, @RequestParam(name = "category", defaultValue = "") String category,
+			HttpSession session) {
+		session.removeAttribute("checkoutItem");
 
 		List<Category> allCategory = categoryService.findAll();
 		List<Product> allProducts;
@@ -62,7 +66,9 @@ public class HomeViewController {
 	}
 
 	@GetMapping("/product/{id}")
-	public String viewProduct(@PathVariable long id, Model model) {
+	public String viewProduct(@PathVariable long id, Model model, HttpSession session) {
+		session.removeAttribute("checkoutItem");
+
 		List<Category> allCategory = categoryService.findAll();
 
 		Product productById = productService.getProductById(id);

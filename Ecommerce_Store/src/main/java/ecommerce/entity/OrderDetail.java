@@ -12,7 +12,7 @@ public class OrderDetail {
     private Long productId;
     private String productName;
     private int quantity;
-    private double price;
+    private double productPrice;
     private double total;
 
     @ManyToOne
@@ -35,8 +35,8 @@ public class OrderDetail {
         return quantity;
     }
 
-    public double getPrice() {
-        return price;
+    public double getProductPrice() {
+        return productPrice;
     }
 
     public double getTotal() {
@@ -63,8 +63,8 @@ public class OrderDetail {
         this.quantity = quantity;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setProductPrice(double productPrice) {
+        this.productPrice = productPrice;
     }
 
     public void setTotal(double total) {

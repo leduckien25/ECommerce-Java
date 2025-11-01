@@ -54,6 +54,9 @@ public class CartService {
     }
 
     public double getTotal() {
-        return getCartItems().stream().mapToDouble(CartItem::getTotal).sum();
+        return getCartItems()
+                .stream()
+                .mapToDouble(item -> item.getTotal())
+                .sum();
     }
 }

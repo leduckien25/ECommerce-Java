@@ -24,7 +24,9 @@
 								<span class="badge bg-warning">Out of Stock</span><br>
 							</th:block>
 
-							Category: <span>[[${product.category.categoryName}]]</span> <br>
+							Category: <span
+								th:text="${product.category != null ? product.category.categoryName : 'Other'}"></span>
+							<br>
 							Policy: 7 Days Replacement & Return
 						</p>
 

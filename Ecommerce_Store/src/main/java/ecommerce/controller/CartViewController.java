@@ -47,7 +47,7 @@ public class CartViewController {
         item.setProductName(currentProduct.getProductName());
         item.setQuantity(quantity);
         item.setProductPrice(currentProduct.getProductPrice());
-        item.setPrice(currentProduct.getProductPrice() * quantity);
+        item.setTotal(currentProduct.getProductPrice() * quantity);
         item.setImageUrl(currentProduct.getProductImage());
 
         if ("add-to-cart".equals(action)) {
@@ -115,7 +115,9 @@ public class CartViewController {
         Order order = new Order();
         order.setShippingAddress(shippingAddress);
         order.setPaymentMethod(paymentMethod);
-        order.setTotalAmount(cartService.getTotal());
+        order.setTotalAmount(cartItems.stream()
+                .mapToDouble(item -> item.getTotal())
+                .sum());
         order.setCustomerName(customerName);
         order.setPhoneNumber(phoneNumber);
 
@@ -124,7 +126,7 @@ public class CartViewController {
             detail.setProductId(item.getProductId());
             detail.setProductName(item.getProductName());
             detail.setQuantity(item.getQuantity());
-            detail.setPrice(item.getPrice());
+            detail.setProductPrice(item.getProductPrice());
             detail.setTotal(item.getTotal());
             detail.setOrder(order);
             return detail;

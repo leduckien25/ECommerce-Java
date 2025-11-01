@@ -16,6 +16,7 @@ public class Order {
     private String shippingAddress;
     private String paymentMethod;
     private String Status = "Pending";
+    private Double totalAmount;
 
     public String getStatus() {
         return Status;
@@ -25,7 +26,6 @@ public class Order {
         Status = status;
     }
 
-    private double totalAmount;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
 
