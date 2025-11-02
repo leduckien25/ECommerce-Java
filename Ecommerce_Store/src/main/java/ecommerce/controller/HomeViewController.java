@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeViewController {
+	static final int sizeOfProductPage = 12;
+
 	@Autowired
 	ProductService productService;
 
@@ -40,25 +42,32 @@ public class HomeViewController {
 
 	@GetMapping("/products")
 	public String product(Model model, @RequestParam(name = "category", defaultValue = "") String category,
-			HttpSession session) {
+			HttpSession session, @RequestParam(name = "p", defaultValue = "1") int p) {
 		session.removeAttribute("checkoutItem");
 
 		List<Category> allCategory = categoryService.findAll();
 		List<Product> allProducts;
+		int offset = (p - 1) * sizeOfProductPage;
+		int totalPages;
 
 		if (category.isEmpty()) {
-			allProducts = productService.findAll();
+			allProducts = productService.findAll(offset, sizeOfProductPage);
+			totalPages = ((productService.findAll().size() - 1) / sizeOfProductPage) + 1;
+
 		} else if (category.equals("Other")) {
-			allProducts = productService.findAllWithoutCategory();
+			allProducts = productService.findAllWithoutCategory(offset, sizeOfProductPage);
+			totalPages = ((productService.findAllWithoutCategory().size() - 1) / sizeOfProductPage) + 1;
 		} else {
-			var optionalCategory = categoryService.findByName(category);
-			if (optionalCategory.isPresent()) {
-				allProducts = productService.findAllProductsByCategoryId(optionalCategory.get().getId());
-			} else {
-				allProducts = new ArrayList<>();
-			}
+			var currentCategory = categoryService.findByName(category).get();
+
+			allProducts = productService.findAllProductsByCategoryId(currentCategory.getId(), offset,
+					sizeOfProductPage);
+			totalPages = ((productService.findAllProductsByCategoryId(currentCategory.getId()).size() - 1)
+					/ sizeOfProductPage) + 1;
 		}
 
+		model.addAttribute("currentPage", p);
+		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("allCategory", allCategory);
 		model.addAttribute("allProducts", allProducts);
 		model.addAttribute("currentCategory", category);

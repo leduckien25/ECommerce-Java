@@ -32,6 +32,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/admin")
 public class AdminViewController {
+	static final int sizeOfAdminPage = 12;
 
 	@Autowired
 	CategoryService categoryService;
@@ -43,7 +44,7 @@ public class AdminViewController {
 	OrderService orderService;
 
 	@GetMapping({ "", "/" })
-	public String adminIndex(Model model) {
+	public String admin(Model model) {
 		model.addAttribute("allCategory", categoryService.findAll());
 
 		return "admin/dashboard";
@@ -65,9 +66,15 @@ public class AdminViewController {
 	}
 
 	@GetMapping("/category")
-	public String category(Model model) {
+	public String category(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
 		model.addAttribute("allCategory", categoryService.findAll());
-		model.addAttribute("allCategoryList", categoryService.findAll());
+
+		int offset = (p - 1) * sizeOfAdminPage;
+		int totalPages = (categoryService.findAll().size() - 1) / sizeOfAdminPage + 1;
+
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("currentPage", p);
+		model.addAttribute("allCategoryList", categoryService.findAll(offset, sizeOfAdminPage));
 
 		return "/admin/category/category-home";
 	}
@@ -136,9 +143,15 @@ public class AdminViewController {
 	}
 
 	@GetMapping("/product")
-	public String productList(Model model) {
-		model.addAttribute("productList", productService.findAll());
+	public String product(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
 		model.addAttribute("allCategory", categoryService.findAll());
+
+		int offset = (p - 1) * sizeOfAdminPage;
+		int totalPages = (productService.findAll().size() - 1) / sizeOfAdminPage + 1;
+
+		model.addAttribute("productList", productService.findAll(offset, sizeOfAdminPage));
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("currentPage", p);
 
 		return "/admin/product/product-home";
 	}
@@ -180,9 +193,16 @@ public class AdminViewController {
 	}
 
 	@GetMapping("/order")
-	public String order(Model model) {
+	public String order(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
 		model.addAttribute("allCategory", categoryService.findAll());
-		model.addAttribute("AllOrderList", orderService.findAll());
+
+		int offset = (p - 1) * sizeOfAdminPage;
+		int totalPages = (orderService.findAll().size() - 1) / sizeOfAdminPage + 1;
+
+		model.addAttribute("AllOrderList", orderService.findAll(offset, sizeOfAdminPage));
+		model.addAttribute("currentPage", p);
+		model.addAttribute("totalPages", totalPages);
+
 		return "/admin/order/order-home";
 	}
 

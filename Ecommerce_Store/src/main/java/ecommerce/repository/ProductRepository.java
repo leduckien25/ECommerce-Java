@@ -12,11 +12,21 @@ import ecommerce.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-	List<Product> findByCategoryId(Long categoryId);
+	List<Product> findAllProductsByCategoryId(Long categoryId);
+
+	@Query(value = "SELECT * FROM product WHERE category_id = :categoryId LIMIT :limit OFFSET :offset", nativeQuery = true)
+	List<Product> findAllProductsByCategoryId(@Param("categoryId") Long categoryId, @Param("limit") int limit,
+			@Param("offset") int offset);
 
 	@Query("SELECT p FROM Product p WHERE p.category IS NULL")
 	List<Product> findAllWithoutCategory();
 
+	@Query(value = "SELECT * FROM product WHERE category_id IS NULL LIMIT :limit OFFSET :offset", nativeQuery = true)
+	List<Product> findAllWithoutCategory(@Param("offset") int offset, @Param("limit") int limit);
+
 	@Query("SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.id = :id")
 	Optional<Product> findByIdWithCategory(@Param("id") Long id);
+
+	@Query(value = "SELECT * FROM product LIMIT :limit OFFSET :offset", nativeQuery = true)
+	List<Product> findAll(@Param("offset") int offset, @Param("limit") int limit);
 }

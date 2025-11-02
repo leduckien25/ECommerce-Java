@@ -28,7 +28,7 @@
 			</div>
 
 			<div class="col-md-10">
-				<div class=" mt-1 p-3 mb-5">
+				<div class=" mt-1 p-3">
 					<div class="card-body">
 						<div class="row">
 							<th:block th:if="${allProducts.size > 0}">
@@ -56,6 +56,16 @@
 							</th:block>
 						</div>
 					</div>
+				</div>
+				<div class="d-flex justify-content-center">
+					<ul class="pagination">
+						<li th:each="i : ${#numbers.sequence(1, totalPages)}" class="page-item"
+							th:classappend="${i == currentPage} ? ' active'">
+							<a class="page-link" th:text="${i}" th:href="@{#strings.isEmpty(currentCategory)} ?
+        							    @{/products(p=${i})}: @{/products(category=${currentCategory}, p=${i})}">
+							</a>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>

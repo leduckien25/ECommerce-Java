@@ -31,8 +31,16 @@ public class ProductService {
 		return productRepository.findAll();
 	}
 
+	public List<Product> findAll(int offset, int limit) {
+		return productRepository.findAll(offset, limit);
+	}
+
 	public List<Product> findAllWithoutCategory() {
 		return productRepository.findAllWithoutCategory();
+	}
+
+	public List<Product> findAllWithoutCategory(int offset, int limit) {
+		return productRepository.findAllWithoutCategory(offset, limit);
 	}
 
 	public Boolean deleteProduct(long id) {
@@ -100,14 +108,11 @@ public class ProductService {
 	}
 
 	public List<Product> findAllProductsByCategoryId(Long categoryId) {
-		List<Product> products = null;
-		if (categoryId == 0) {
-			products = productRepository.findAll();
-		} else {
-			products = productRepository.findByCategoryId(categoryId);
-		}
+		return productRepository.findAllProductsByCategoryId(categoryId);
+	}
 
-		return products;
+	public List<Product> findAllProductsByCategoryId(Long categoryId, int offset, int limit) {
+		return productRepository.findAllProductsByCategoryId(categoryId, limit, offset);
 	}
 
 	public Optional<Product> getProductByIdWithCategory(Long productId) {

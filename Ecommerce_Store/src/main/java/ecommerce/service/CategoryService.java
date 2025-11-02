@@ -38,12 +38,15 @@ public class CategoryService {
 	}
 
 	public Optional<Category> findById(long id) {
-		// TODO Auto-generated method stub
 		return categoryRepository.findById(id);
 	}
 
 	public List<Category> findAll() {
 		return categoryRepository.findAll();
+	}
+
+	public List<Category> findAll(int offset, int limit) {
+		return categoryRepository.findAll(limit, offset);
 	}
 
 	public Optional<Category> findByName(String name) {

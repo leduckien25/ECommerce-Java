@@ -22,6 +22,10 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    public List<Order> findAll(int offset, int limit) {
+        return orderRepository.findAll(limit, offset);
+    }
+
     public Order getOrderById(Long id) {
         Optional<Order> order = orderRepository.findById(id);
         return order.orElse(null);
