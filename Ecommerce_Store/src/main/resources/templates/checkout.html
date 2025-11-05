@@ -28,8 +28,8 @@
                             <tr th:each="item : ${cart}">
                                 <td th:text="${item.productName}"></td>
                                 <td>
-                                    <img th:src="@{'/images/'+${item.imageUrl}}" alt="Product Image"
-                                        class="img-thumbnail" style="width: 60px; height: 60px;">
+                                    <img th:src="${{item.imageUrl}}" alt="Product Image" class="img-thumbnail"
+                                        style="width: 60px; height: 60px;">
                                 </td>
                                 <td th:text="${item.productPrice}"></td>
                                 <td th:text="${item.quantity}"></td>
@@ -43,7 +43,6 @@
                     </h5>
                 </div>
 
-                <!-- Right Column: Checkout Form -->
                 <div class="col-md-4">
                     <h4>Shipping & Payment</h4>
                     <form th:action="@{/checkout}" method="post">

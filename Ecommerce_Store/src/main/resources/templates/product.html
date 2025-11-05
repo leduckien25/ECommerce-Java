@@ -35,8 +35,8 @@
 								<div class="col-md-3" th:each="product : ${allProducts}">
 									<div class="card">
 										<div class="card-body">
-											<img alt="product_image" th:src="@{'/images/'+${product.productImage}}"
-												width="100%" height="150px">
+											<img alt="product_image" th:src="${{product.productImage}}" width="100%"
+												height="150px">
 											<p class="fs-5 text-center">[[${product.productName}]]</p>
 
 											<div class="row text-center">

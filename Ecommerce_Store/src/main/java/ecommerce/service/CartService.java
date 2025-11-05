@@ -29,15 +29,15 @@ public class CartService {
 
     public void addItem(CartItem item) {
         List<CartItem> cart = getCartItems();
-        boolean found = false;
+        boolean flag = false;
         for (CartItem cartItem : cart) {
             if (cartItem.getProductId().equals(item.getProductId())) {
                 cartItem.setQuantity(cartItem.getQuantity() + item.getQuantity());
-                found = true;
+                flag = true;
                 break;
             }
         }
-        if (!found) {
+        if (!flag) {
             cart.add(item);
         }
         session.setAttribute(CART_SESSION_KEY, cart);

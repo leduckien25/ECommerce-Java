@@ -11,28 +11,11 @@
 		<relativePath />
 	</parent>
 
-	<groupId>com.mdtalalwasim.ecommerce</groupId>
+	<groupId>ecommerce</groupId>
 	<artifactId>Ecommerce_Store</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Ecommerce_Store</name>
-	<description>Ecommerce Spring boot project for online shopping.</description>
-	<packaging>war</packaging> <!-- Change packaging to war -->
-	<url />
-	<licenses>
-		<license />
-	</licenses>
-	<developers>
-		<developer />
-	</developers>
-	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
-	</scm>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
+	<packaging>war</packaging>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -52,12 +35,6 @@
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

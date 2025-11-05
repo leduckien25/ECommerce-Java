@@ -29,8 +29,7 @@
 							<tbody>
 								<tr th:each="product : ${productList}">
 									<td scope="row" th:text="${product.id}"></td>
-									<td><img th:src="@{'/images/'+${product.productImage}}" width="50px;"
-											height="50px;"></td>
+									<td><img th:src="${{product.productImage}}" width="50px;" height="50px;"></td>
 									<td>[[${product.productName}]]</td>
 									<td
 										th:text="${product.category != null ? product.category.categoryName : 'No Category'}">
