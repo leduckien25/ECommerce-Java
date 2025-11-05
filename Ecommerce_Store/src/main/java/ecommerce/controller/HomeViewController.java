@@ -41,34 +41,42 @@ public class HomeViewController {
 	}
 
 	@GetMapping("/products")
-	public String product(Model model, @RequestParam(name = "category", defaultValue = "") String category,
-			HttpSession session, @RequestParam(name = "p", defaultValue = "1") int p) {
+	public String product(Model model,
+			@RequestParam(name = "category", defaultValue = "") String category,
+			@RequestParam(name = "search", defaultValue = "") String keyword,
+			HttpSession session,
+			@RequestParam(name = "p", defaultValue = "1") int p) {
 		session.removeAttribute("checkoutItem");
-
 		List<Category> allCategory = categoryService.findAll();
+		model.addAttribute("allCategory", allCategory);
+
 		List<Product> allProducts;
 		int offset = (p - 1) * sizeOfProductPage;
 		int totalPages;
 
-		if (category.isEmpty()) {
-			allProducts = productService.findAll(offset, sizeOfProductPage);
-			totalPages = ((productService.findAll().size() - 1) / sizeOfProductPage) + 1;
-
-		} else if (category.equals("Other")) {
-			allProducts = productService.findAllWithoutCategory(offset, sizeOfProductPage);
-			totalPages = ((productService.findAllWithoutCategory().size() - 1) / sizeOfProductPage) + 1;
+		if (!keyword.equals("")) {
+			allProducts = productService.findAllProductsByKeyword(keyword, offset, sizeOfProductPage);
+			totalPages = ((productService.findAllProductsByKeyword(keyword).size() - 1) / sizeOfProductPage) + 1;
 		} else {
-			var currentCategory = categoryService.findByName(category).get();
+			if (category.isEmpty()) {
+				allProducts = productService.findAll(offset, sizeOfProductPage);
+				totalPages = ((productService.findAll().size() - 1) / sizeOfProductPage) + 1;
 
-			allProducts = productService.findAllProductsByCategoryId(currentCategory.getId(), offset,
-					sizeOfProductPage);
-			totalPages = ((productService.findAllProductsByCategoryId(currentCategory.getId()).size() - 1)
-					/ sizeOfProductPage) + 1;
+			} else if (category.equals("Other")) {
+				allProducts = productService.findAllWithoutCategory(offset, sizeOfProductPage);
+				totalPages = ((productService.findAllWithoutCategory().size() - 1) / sizeOfProductPage) + 1;
+			} else {
+				var currentCategory = categoryService.findByName(category).get();
+
+				allProducts = productService.findAllProductsByCategoryId(currentCategory.getId(), offset,
+						sizeOfProductPage);
+				totalPages = ((productService.findAllProductsByCategoryId(currentCategory.getId()).size() - 1)
+						/ sizeOfProductPage) + 1;
+			}
 		}
 
 		model.addAttribute("currentPage", p);
 		model.addAttribute("totalPages", totalPages);
-		model.addAttribute("allCategory", allCategory);
 		model.addAttribute("allProducts", allProducts);
 		model.addAttribute("currentCategory", category);
 		return "product";

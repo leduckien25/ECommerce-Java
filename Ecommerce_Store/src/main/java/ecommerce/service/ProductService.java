@@ -119,4 +119,12 @@ public class ProductService {
 		return productRepository.findByIdWithCategory(productId);
 	}
 
+	public List<Product> findAllProductsByKeyword(String keyword) {
+		return productRepository.findAllProductsByKeyword(keyword);
+	}
+
+	public List<Product> findAllProductsByKeyword(String keyword, int offset, int limit) {
+		return productRepository.findAllProductsByKeyword(keyword, limit, offset);
+	}
+
 }

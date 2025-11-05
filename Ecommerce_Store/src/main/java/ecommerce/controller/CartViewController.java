@@ -34,7 +34,7 @@ public class CartViewController {
     ProductService productService;
 
     @PostMapping("/cart/action")
-    public String handleCartAction(
+    public String cartAction(
             @RequestParam("productId") Long productId,
             @RequestParam("quantity") int quantity,
             @RequestParam("action") String action,
@@ -87,6 +87,12 @@ public class CartViewController {
         }
 
         return "checkout";
+    }
+
+    @PostMapping("/cart/remove")
+    public String removeCart(@RequestParam("productId") long productId) {
+        cartService.removeItem(productId);
+        return "redirect:/cart";
     }
 
     @PostMapping("/checkout")

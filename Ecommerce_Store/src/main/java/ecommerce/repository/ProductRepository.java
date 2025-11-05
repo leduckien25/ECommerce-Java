@@ -29,4 +29,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Query(value = "SELECT * FROM product LIMIT :limit OFFSET :offset", nativeQuery = true)
 	List<Product> findAll(@Param("offset") int offset, @Param("limit") int limit);
+
+	@Query(value = "SELECT * FROM product WHERE product_name LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
+	List<Product> findAllProductsByKeyword(@Param("keyword") String keyword);
+
+	@Query(value = "SELECT * FROM product WHERE product_name LIKE CONCAT('%', :keyword, '%') LIMIT :limit OFFSET :offset", nativeQuery = true)
+	List<Product> findAllProductsByKeyword(@Param("keyword") String keyword, @Param("limit") int limit,
+			@Param("offset") int offset);
 }
