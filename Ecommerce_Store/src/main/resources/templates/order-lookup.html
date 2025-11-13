@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<section>
+    <div class="container mt-3">
+        <h1>Order Lookup</h1>
+
+        <form th:action="@{/orders/search}" method="post" class="row g-3">
+            <div class="col-md-4">
+                <label for="phoneNumber" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required />
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Search</button>
+            </div>
+        </form>
+
+        <div class="card mt-3" th:if="${!#lists.isEmpty(ordersByPhoneNumber)}">
+            <div class="card-header">
+                Search Results
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${ordersByPhoneNumber}">
+                            <td th:text="${order.id}"></td>
+                            <td th:text="${order.customerName}"></td>
+                            <td th:text="${order.orderDate}"></td>
+                            <td>
+                                <span th:classappend="
+                                                        ${order.status == 'Pending'} ? 'badge bg-warning' :
+                                                        (${order.status == 'Shipped'} ? 'badge bg-info' :
+                                                        (${order.status == 'Delivered'} ? 'badge bg-success' :
+                                                        (${order.status == 'Cancelled'} ? 'badge bg-danger' : 'badge bg-secondary')))
+                                                    " th:text="${order.status}">
+                                </span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'POINT', 2, 'POINT')}">
+                            </td>
+                            <td>
+                                <a th:href="@{|/order/${order.id}|}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>

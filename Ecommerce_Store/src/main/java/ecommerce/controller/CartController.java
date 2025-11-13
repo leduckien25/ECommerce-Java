@@ -1,17 +1,14 @@
 package ecommerce.controller;
 
-import ecommerce.entity.Category;
 import ecommerce.entity.Order;
 import ecommerce.entity.OrderDetail;
 import ecommerce.entity.Product;
 import ecommerce.model.CartItem;
 import ecommerce.service.CartService;
-import ecommerce.service.CategoryService;
-import ecommerce.service.OrderService;
-import ecommerce.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class CartViewController {
+public class CartController extends BaseController {
     @Autowired
     CartService cartService;
-
-    @Autowired
-    OrderService orderService;
-
-    @Autowired
-    CategoryService categoryService;
-
-    @Autowired
-    ProductService productService;
 
     @PostMapping("/cart/action")
     public String cartAction(
@@ -63,8 +51,7 @@ public class CartViewController {
 
     @GetMapping("/cart")
     public String showCart(Model model) {
-        List<Category> allCategory = categoryService.findAll();
-        model.addAttribute("allCategory", allCategory);
+        addCommonData(model);
 
         model.addAttribute("cart", cartService.getCartItems());
         model.addAttribute("total", cartService.getTotal());
@@ -73,8 +60,7 @@ public class CartViewController {
 
     @GetMapping("/checkout")
     public String showCheckout(Model model, HttpSession session) {
-        List<Category> allCategory = categoryService.findAll();
-        model.addAttribute("allCategory", allCategory);
+        addCommonData(model);
 
         CartItem checkoutItem = (CartItem) session.getAttribute("checkoutItem");
 
@@ -103,6 +89,7 @@ public class CartViewController {
             @RequestParam String customerName,
             @RequestParam String phoneNumber,
             Model model) {
+        addCommonData(model);
 
         CartItem checkoutItem = (CartItem) session.getAttribute("checkoutItem");
 
@@ -126,6 +113,7 @@ public class CartViewController {
                 .sum());
         order.setCustomerName(customerName);
         order.setPhoneNumber(phoneNumber);
+        order.setOrderDate(LocalDate.now());
 
         List<OrderDetail> orderDetails = cartItems.stream().map(item -> {
             OrderDetail detail = new OrderDetail();
@@ -133,7 +121,6 @@ public class CartViewController {
             detail.setProductName(item.getProductName());
             detail.setQuantity(item.getQuantity());
             detail.setProductPrice(item.getProductPrice());
-            detail.setTotal(item.getTotal());
             detail.setOrder(order);
             return detail;
         }).toList();
@@ -143,7 +130,6 @@ public class CartViewController {
         orderService.saveOrder(order);
 
         for (OrderDetail detail : orderDetails) {
-            int quantity = detail.getQuantity();
             Product product = productService.getProductByIdWithCategory(detail.getProductId()).get();
             int newStock = Math.max(0, product.getProductStock() - detail.getQuantity());
 

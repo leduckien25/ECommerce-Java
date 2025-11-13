@@ -6,10 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,26 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ecommerce.entity.Category;
-import ecommerce.entity.OrderDetail;
 import ecommerce.entity.Product;
-import ecommerce.service.CategoryService;
-import ecommerce.service.OrderService;
-import ecommerce.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminViewController {
+public class AdminController extends BaseController {
 	static final int sizeOfAdminPage = 12;
-
-	@Autowired
-	CategoryService categoryService;
-
-	@Autowired
-	ProductService productService;
-
-	@Autowired
-	OrderService orderService;
 
 	@GetMapping({ "", "/" })
 	public String admin(Model model) {
@@ -52,7 +37,7 @@ public class AdminViewController {
 
 	@GetMapping("/add-category")
 	public String addCategory(Model model) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		return "admin/category/category-add-form";
 	}
@@ -60,14 +45,12 @@ public class AdminViewController {
 	@PostMapping("/save-category")
 	public String saveCategory(@ModelAttribute Category category) {
 
-		Category saveCategory = categoryService.saveCategory(category);
-
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/category")
 	public String category(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
 		int totalPages = (categoryService.findAll().size() - 1) / sizeOfAdminPage + 1;
@@ -81,7 +64,7 @@ public class AdminViewController {
 
 	@GetMapping("/edit-category/{id}")
 	public String editCategoryForm(@PathVariable("id") long id, Model model) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		Optional<Category> categoryObj = categoryService.findById(id);
 		if (categoryObj.isPresent()) {
@@ -96,23 +79,19 @@ public class AdminViewController {
 
 	@PostMapping("/update-category")
 	public String udateCategory(@ModelAttribute Category category) {
-		Category updateCategory = categoryService.saveCategory(category);
-
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/delete-category/{id}")
 	public String deleteCategory(@PathVariable("id") long id, Model model) {
-		model.addAttribute("allCategory", categoryService.findAll());
-
-		Boolean deleteCategory = categoryService.deleteCategory(id);
+		addCommonData(model);
 
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/add-product")
 	public String addProduct(Model model) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		return "/admin/product/add-product";
 	}
@@ -144,7 +123,7 @@ public class AdminViewController {
 
 	@GetMapping("/product")
 	public String product(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
 		int totalPages = (productService.findAll().size() - 1) / sizeOfAdminPage + 1;
@@ -171,9 +150,10 @@ public class AdminViewController {
 
 	@GetMapping("/edit-product/{id}")
 	public String editProduct(@PathVariable long id, Model model) {
+		addCommonData(model);
+
 		Product product = productService.getProductById(id);
 		model.addAttribute("product", product);
-		model.addAttribute("allCategoryList", categoryService.findAll());
 		return "/admin/product/edit-product";
 	}
 
@@ -187,14 +167,12 @@ public class AdminViewController {
 				product.setCategory(category.get());
 			}
 		}
-		Product updateProduct = productService.updateProduct(product, file);
-
 		return "redirect:/admin/product";
 	}
 
 	@GetMapping("/order")
 	public String order(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
-		model.addAttribute("allCategory", categoryService.findAll());
+		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
 		int totalPages = (orderService.findAll().size() - 1) / sizeOfAdminPage + 1;
@@ -208,10 +186,11 @@ public class AdminViewController {
 
 	@GetMapping("/order/{id}")
 	public String detailOrder(Model model, @PathVariable long id) {
+		addCommonData(model);
+
 		var order = orderService.getOrderById(id);
 
 		model.addAttribute("order", order);
-		model.addAttribute("allCategory", categoryService.findAll());
 		return "/admin/order/order-detail";
 	}
 

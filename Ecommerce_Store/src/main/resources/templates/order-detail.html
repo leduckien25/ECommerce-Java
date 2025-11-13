@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<section>
+    <div class="container my-5">
+
+        <div class="mb-4">
+            <h2 class="fw-bold">Order Details</h2>
+            <p class="text-muted">Order ID: <b th:text="${order.id}"></b></p>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Order Status</h5>
+
+                <span th:classappend="
+                        ${order.status == 'Pending'} ? 'badge bg-warning' :
+                        (${order.status == 'Shipped'} ? 'badge bg-info' :
+                        (${order.status == 'Delivered'} ? 'badge bg-success' :
+                        (${order.status == 'Cancelled'} ? 'badge bg-danger' : 'badge bg-secondary')))
+                    " th:text="${order.status}">
+                </span>
+
+                <p class="mt-3">
+                    <i class="fa-solid fa-calendar"></i>
+                    <b>Order Date:</b> <span th:text="${order.orderDate}"></span>
+                </p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Customer Information</h5>
+                <p><b>Name:</b> <span th:text="${order.customerName}"></span></p>
+                <p><b>Phone:</b> <span th:text="${order.phoneNumber}"></span></p>
+                <p><b>Address:</b> <span th:text="${order.shippingAddress}"></span></p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Items</h5>
+
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50%">Product</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${order.orderDetails}">
+                            <td>
+                                <b th:text="${item.productName}">Product Name</b>
+                            </td>
+
+                            <td class="text-end" th:text="${item.quantity}"></td>
+
+                            <td class="text-end"
+                                th:text="${#numbers.formatDecimal(item.productPrice, 1, 'POINT', 2, 'POINT')}">
+
+                            <td class="text-end"
+                                th:text="${#numbers.formatDecimal(item.productPrice * item.quantity, 1, 'POINT', 2, 'POINT')}">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Payment Summary</h5>
+                <p><b>Payment method:</b> <span th:text="${order.paymentMethod}"></span></p>
+                <p><b>Total:</b> <span th:text="${order.totalAmount}"></span></p>
+            </div>
+        </div>
+
+        <a href="/orders/search" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+</section>

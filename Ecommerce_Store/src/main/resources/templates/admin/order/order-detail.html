@@ -19,7 +19,8 @@
 
                         <select class="border-0 shadow-sm rounded-2" name="newStatus">
                             <option value="Pending" th:selected="${order.status == 'Pending'}">Pending</option>
-                            <option value="Paid" th:selected="${order.status == 'Paid'}">Paid</option>
+                            <option value="Shipped" th:selected="${order.status == 'Shipped'}">Shipped</option>
+                            <option value="Delivered" th:selected="${order.status == 'Delivered'}">Delivered</option>
                             <option value="Cancelled" th:selected="${order.status == 'Cancelled'}">Cancelled</option>
                         </select>
                     </dd>
@@ -29,6 +30,9 @@
 
                     <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Address</dt>
                     <dd class="col-md-9 col-sm-8" th:text="${order.shippingAddress}"></dd>
+
+                    <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Date</dt>
+                    <dd class="col-md-9 col-sm-8" th:text="${order.orderDate}"></dd>
 
                     <dt class="col-md-3 col-sm-4 text-muted fw-semibold">Total Amount</dt>
                     <dd class="col-md-9 col-sm-8 text-success fw-bold fs-5" th:text="${order.totalAmount}" dd>

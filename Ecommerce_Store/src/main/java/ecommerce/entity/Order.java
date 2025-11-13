@@ -1,6 +1,8 @@
 package ecommerce.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Table(name = "`order`")
@@ -16,6 +18,19 @@ public class Order {
     private String shippingAddress;
     private String paymentMethod;
     private String Status = "Pending";
+    private LocalDate orderDate;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails;
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
     private Double totalAmount;
 
     public String getStatus() {
@@ -25,9 +40,6 @@ public class Order {
     public void setStatus(String status) {
         Status = status;
     }
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
 
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;

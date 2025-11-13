@@ -14,7 +14,8 @@
                                     <th scope="col">ID</th>
                                     <th scope="col">Customer Name</th>
                                     <th scope="col">Phone Number</th>
-                                    <th scope="col">shipping Address</th>
+                                    <th scope="col">Shipping Address</th>
+                                    <th scope="col">Date</th>
                                     <th scope="col"> Payment Method</th>
                                     <th scope="col">Total Amount</th>
                                     <th scope="col">Status</th>
@@ -26,13 +27,16 @@
                                     <td th:text="${order.customerName}"></td>
                                     <td th:text="${order.phoneNumber}"></td>
                                     <td th:text="${order.shippingAddress}"></td>
+                                    <td th:text="${order.orderDate}"></td>
                                     <td th:text="${order.paymentMethod}"></td>
                                     <td th:text="${order.totalAmount}"></td>
                                     <td>
-                                        <span th:switch="${order.status}">
-                                            <span th:case="'Pending'" class="badge bg-warning text-dark">Pending</span>
-                                            <span th:case="'Paid'" class="badge bg-success">Paid</span>
-                                            <span th:case="'Cancelled'" class="badge bg-danger">Cancelled</span>
+                                        <span
+                                            th:classappend="${order.status == 'Pending'} ? 'badge bg-warning' :
+                                                                (${order.status == 'Shipped'} ? 'badge bg-info' :
+                                                                (${order.status == 'Delivered'} ? 'badge bg-success' :
+                                                                (${order.status == 'Cancelled'} ? 'badge bg-danger' : 'badge bg-secondary')))"
+                                            th:text="${order.status}">
                                         </span>
                                     </td>
                                 </tr>

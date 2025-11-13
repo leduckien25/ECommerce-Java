@@ -18,6 +18,10 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public List<Order> findOrdersByPhoneNumber(String phoneNumber) {
+        return orderRepository.findOrdersByPhoneNumber(phoneNumber);
+    }
+
     public List<Order> findAll() {
         return orderRepository.findAll();
     }

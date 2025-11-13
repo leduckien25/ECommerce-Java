@@ -49,13 +49,18 @@
 						</form>
 					</li>
 
-					<!-- Cart icon -->
 					<li class="nav-item">
 						<a class="nav-link position-relative" href="/cart">
 							<i class="fa-solid fa-cart-shopping fa-lg"></i>
 							<span
 								class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
 								th:text="${cartItemCount}">0</span>
+						</a>
+					</li>
+
+					<li class="nav-item ms-3">
+						<a class="btn btn-warning btn-sm" href="/orders/search">
+							<i class="fa-solid fa-magnifying-glass"></i> Track Order
 						</a>
 					</li>
 				</ul>

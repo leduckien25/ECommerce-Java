@@ -13,7 +13,6 @@ public class OrderDetail {
     private String productName;
     private int quantity;
     private double productPrice;
-    private double total;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -40,7 +39,7 @@ public class OrderDetail {
     }
 
     public double getTotal() {
-        return total;
+        return quantity * productPrice;
     }
 
     public Order getOrder() {
@@ -65,10 +64,6 @@ public class OrderDetail {
 
     public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
     }
 
     public void setOrder(Order order) {

@@ -1,41 +1,29 @@
 package ecommerce.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ecommerce.entity.Category;
 import ecommerce.entity.Product;
-import ecommerce.service.CategoryService;
-import ecommerce.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class HomeViewController {
-	static final int sizeOfProductPage = 12;
-
-	@Autowired
-	ProductService productService;
-
-	@Autowired
-	CategoryService categoryService;
+public class HomeController extends BaseController {
+	static int sizeOfProductPage = 12;
 
 	@GetMapping("/")
 	public String homeIndex(Model model, HttpSession session) {
 		session.removeAttribute("checkoutItem");
-
-		List<Category> allCategory = categoryService.findAll();
+		addCommonData(model);
 
 		List<Product> latestEightActiveProducts = productService.findAll().stream()
 				.sorted((p1, p2) -> p2.getId().compareTo(p1.getId()))
 				.limit(8).toList();
 
-		model.addAttribute("allCategory", allCategory);
 		model.addAttribute("latestEightActiveProducts", latestEightActiveProducts);
 		return "index.html";
 	}
@@ -47,8 +35,7 @@ public class HomeViewController {
 			HttpSession session,
 			@RequestParam(name = "p", defaultValue = "1") int p) {
 		session.removeAttribute("checkoutItem");
-		List<Category> allCategory = categoryService.findAll();
-		model.addAttribute("allCategory", allCategory);
+		addCommonData(model);
 
 		List<Product> allProducts;
 		int offset = (p - 1) * sizeOfProductPage;
@@ -85,13 +72,40 @@ public class HomeViewController {
 	@GetMapping("/product/{id}")
 	public String viewProduct(@PathVariable long id, Model model, HttpSession session) {
 		session.removeAttribute("checkoutItem");
-
-		List<Category> allCategory = categoryService.findAll();
+		addCommonData(model);
 
 		Product productById = productService.getProductById(id);
 
-		model.addAttribute("allCategory", allCategory);
 		model.addAttribute("product", productById);
 		return "details";
+	}
+
+	@GetMapping("/orders/search")
+	public String searchOrders(HttpSession session, Model model) {
+		session.removeAttribute("checkoutItem");
+		addCommonData(model);
+
+		return "order-lookup.html";
+	}
+
+	@PostMapping("/orders/search")
+	public String searchOrders(@RequestParam("phoneNumber") String phoneNumber, HttpSession session, Model model) {
+		session.removeAttribute("checkoutItem");
+		addCommonData(model);
+
+		var ordersByPhoneNumber = orderService.findOrdersByPhoneNumber(phoneNumber);
+		model.addAttribute("ordersByPhoneNumber", ordersByPhoneNumber);
+		return "order-lookup.html";
+	}
+
+	@GetMapping("/order/{id}")
+	public String orderDetail(@PathVariable("id") Long orderId, HttpSession session, Model model) {
+		session.removeAttribute("checkoutItem");
+		addCommonData(model);
+
+		var orderById = orderService.getOrderById(orderId);
+		model.addAttribute("order", orderById);
+
+		return "order-detail.html";
 	}
 }
