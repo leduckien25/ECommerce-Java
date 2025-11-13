@@ -7,10 +7,8 @@ import ecommerce.model.CartItem;
 import ecommerce.service.CartService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,7 +53,7 @@ public class CartController extends BaseController {
 
         model.addAttribute("cart", cartService.getCartItems());
         model.addAttribute("total", cartService.getTotal());
-        return "cart";
+        return "/cart/index";
     }
 
     @GetMapping("/checkout")
@@ -72,7 +70,7 @@ public class CartController extends BaseController {
             model.addAttribute("total", cartService.getTotal());
         }
 
-        return "checkout";
+        return "/cart/cart-checkout";
     }
 
     @PostMapping("/cart/remove")
@@ -147,6 +145,6 @@ public class CartController extends BaseController {
         model.addAttribute("phoneNumber", phoneNumber);
         model.addAttribute("customerName", customerName);
         model.addAttribute("shippingAddress", shippingAddress);
-        return "order-success";
+        return "/order/order-success";
     }
 }

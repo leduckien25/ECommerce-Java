@@ -6,11 +6,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import ecommerce.entity.Product;
 import ecommerce.repository.ProductRepository;
 
@@ -74,7 +72,6 @@ public class ProductService {
 
 		if (updatedProduct != null && file != null && !file.isEmpty()) {
 			try {
-				// ✅ Store outside classpath (recommended)
 				String uploadDir = System.getProperty("user.dir") + "/uploads/product_image";
 
 				Path imageDir = Paths.get(uploadDir);
@@ -82,19 +79,15 @@ public class ProductService {
 					Files.createDirectories(imageDir);
 				}
 
-				// Delete old image
 				if (oldImageName != null && !oldImageName.isEmpty()) {
 					Path oldImagePath = imageDir.resolve(oldImageName);
 					if (Files.exists(oldImagePath)) {
 						Files.delete(oldImagePath);
-						System.out.println("Deleted old image: " + oldImagePath);
 					}
 				}
 
-				// Save new image
 				Path newImagePath = imageDir.resolve(file.getOriginalFilename());
 				Files.copy(file.getInputStream(), newImagePath, StandardCopyOption.REPLACE_EXISTING);
-				System.out.println("Saved new image: " + newImagePath);
 
 			} catch (Exception e) {
 				e.printStackTrace();

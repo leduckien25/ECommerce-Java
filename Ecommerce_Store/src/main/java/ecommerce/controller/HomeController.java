@@ -1,7 +1,6 @@
 package ecommerce.controller;
 
 import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +65,7 @@ public class HomeController extends BaseController {
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("allProducts", allProducts);
 		model.addAttribute("currentCategory", category);
-		return "product";
+		return "/product/index";
 	}
 
 	@GetMapping("/product/{id}")
@@ -77,7 +76,7 @@ public class HomeController extends BaseController {
 		Product productById = productService.getProductById(id);
 
 		model.addAttribute("product", productById);
-		return "details";
+		return "/product/product-detail";
 	}
 
 	@GetMapping("/orders/search")
@@ -85,7 +84,7 @@ public class HomeController extends BaseController {
 		session.removeAttribute("checkoutItem");
 		addCommonData(model);
 
-		return "order-lookup.html";
+		return "/order/order-lookup";
 	}
 
 	@PostMapping("/orders/search")
@@ -95,7 +94,7 @@ public class HomeController extends BaseController {
 
 		var ordersByPhoneNumber = orderService.findOrdersByPhoneNumber(phoneNumber);
 		model.addAttribute("ordersByPhoneNumber", ordersByPhoneNumber);
-		return "order-lookup.html";
+		return "/order/order-lookup";
 	}
 
 	@GetMapping("/order/{id}")
@@ -106,6 +105,6 @@ public class HomeController extends BaseController {
 		var orderById = orderService.getOrderById(orderId);
 		model.addAttribute("order", orderById);
 
-		return "order-detail.html";
+		return "/order/order-detail";
 	}
 }

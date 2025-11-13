@@ -2,11 +2,8 @@ package ecommerce.service;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-
 import ecommerce.entity.Category;
 import ecommerce.repository.CategoryRepository;
 
@@ -20,16 +17,10 @@ public class CategoryService {
 		return categoryRepository.save(category);
 	}
 
-	public boolean existCategory(String categoryName) {
-		return categoryRepository.existsByCategoryName(categoryName);
-	}
-
 	public Boolean deleteCategory(long id) {
-		// TODO Auto-generated method stub
-
 		Category categoryFound = categoryRepository.findById(id).orElse(null);
 
-		if (!ObjectUtils.isEmpty(categoryFound)) {
+		if (categoryFound != null) {
 			categoryRepository.delete(categoryFound);
 			return true;
 		}

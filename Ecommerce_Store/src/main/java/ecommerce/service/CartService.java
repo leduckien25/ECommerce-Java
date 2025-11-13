@@ -3,7 +3,6 @@ package ecommerce.service;
 import ecommerce.model.CartItem;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 

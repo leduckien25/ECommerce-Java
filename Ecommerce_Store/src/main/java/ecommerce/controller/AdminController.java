@@ -12,44 +12,52 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import ecommerce.entity.Category;
 import ecommerce.entity.Product;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController extends BaseController {
-	static final int sizeOfAdminPage = 12;
+public class AdminController extends AdminBaseController {
 
 	@GetMapping({ "", "/" })
-	public String admin(Model model) {
-		model.addAttribute("allCategory", categoryService.findAll());
+	public String admin(Model model, HttpSession session) {
 
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
+		addCommonData(model);
 		return "admin/dashboard";
 	}
 
 	@GetMapping("/add-category")
-	public String addCategory(Model model) {
-		addCommonData(model);
+	public String addCategory(Model model, HttpSession session) {
 
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
+		addCommonData(model);
 		return "admin/category/category-add-form";
 	}
 
 	@PostMapping("/save-category")
 	public String saveCategory(@ModelAttribute Category category) {
-
+		categoryService.saveCategory(category);
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/category")
-	public String category(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
+	public String category(Model model, @RequestParam(name = "p", defaultValue = "1") int p, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
@@ -63,58 +71,65 @@ public class AdminController extends BaseController {
 	}
 
 	@GetMapping("/edit-category/{id}")
-	public String editCategoryForm(@PathVariable("id") long id, Model model) {
+	public String editCategoryForm(@PathVariable("id") long id, Model model, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
 		Optional<Category> categoryObj = categoryService.findById(id);
 		if (categoryObj.isPresent()) {
-			Category category = categoryObj.get();
-			model.addAttribute("category", category);
+			model.addAttribute("category", categoryObj.get());
 			return "/admin/category/category-edit-form";
-
-		} else {
-			return "redirect:/admin/category";
 		}
+		return "redirect:/admin/category";
 	}
 
 	@PostMapping("/update-category")
-	public String udateCategory(@ModelAttribute Category category) {
+	public String updateCategory(@ModelAttribute Category category) {
+		categoryService.saveCategory(category);
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/delete-category/{id}")
-	public String deleteCategory(@PathVariable("id") long id, Model model) {
-		addCommonData(model);
-
+	public String deleteCategory(@PathVariable("id") long id) {
+		categoryService.deleteCategory(id);
 		return "redirect:/admin/category";
 	}
 
 	@GetMapping("/add-product")
-	public String addProduct(Model model) {
-		addCommonData(model);
+	public String addProduct(Model model, HttpSession session) {
 
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
+		addCommonData(model);
 		return "/admin/product/add-product";
 	}
 
 	@PostMapping("/save-product")
-	public String saveProduct(@ModelAttribute Product product, @RequestParam("categoryId") Long categoryId,
-			@RequestParam("file") MultipartFile file)
-			throws IOException {
-		String imageName = file != null ? file.getOriginalFilename() : "default.png";
-
-		product.setProductImage(imageName);
+	public String saveProduct(@ModelAttribute Product product,
+			@RequestParam("categoryId") Long categoryId,
+			@RequestParam("file") MultipartFile file) throws IOException {
 
 		if (categoryId != -1) {
 			product.setCategory(categoryService.findById(categoryId).get());
 		}
 
-		Product saveProduct = productService.saveProduct(product);
+		String imageName = file != null ? file.getOriginalFilename() : "default.png";
+		product.setProductImage(imageName);
 
-		if (!ObjectUtils.isEmpty(saveProduct)) {
+		Product saved = productService.saveProduct(product);
+
+		if (!ObjectUtils.isEmpty(saved)) {
 			File savefile = new ClassPathResource("static/img").getFile();
-			Path path = Paths
-					.get(savefile.getAbsolutePath() + File.separator + "product_image" + File.separator + imageName);
-			System.out.println("File save Path :" + path);
+			Path path = Paths.get(savefile.getAbsolutePath()
+					+ File.separator + "product_image"
+					+ File.separator + imageName);
+
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 		}
 
@@ -122,7 +137,12 @@ public class AdminController extends BaseController {
 	}
 
 	@GetMapping("/product")
-	public String product(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
+	public String product(Model model, @RequestParam(name = "p", defaultValue = "1") int p, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
@@ -137,41 +157,47 @@ public class AdminController extends BaseController {
 
 	@GetMapping("/delete-product/{id}")
 	public String deleteProduct(@PathVariable("id") long id, HttpSession session) {
-		Boolean deleteProduct = productService.deleteProduct(id);
 
-		if (deleteProduct) {
-			session.setAttribute("successMsg", "Product Deleted Successfully.");
-		} else {
-			session.setAttribute("errorMsg", "Something Wrong on server while deleting Product");
-		}
+		boolean ok = productService.deleteProduct(id);
+		session.setAttribute(ok ? "successMsg" : "errorMsg",
+				ok ? "Product Deleted Successfully." : "Error deleting product");
+
 		return "redirect:/admin/product";
-
 	}
 
 	@GetMapping("/edit-product/{id}")
-	public String editProduct(@PathVariable long id, Model model) {
+	public String editProduct(@PathVariable long id, Model model, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
-		Product product = productService.getProductById(id);
-		model.addAttribute("product", product);
+		model.addAttribute("product", productService.getProductById(id));
 		return "/admin/product/edit-product";
 	}
 
 	@PostMapping("/update-product")
 	public String updateProduct(@ModelAttribute Product product,
-			@RequestParam("categoryId") Long categoryId, @RequestParam("file") MultipartFile file) {
+			@RequestParam("categoryId") Long categoryId,
+			@RequestParam("file") MultipartFile file) {
 
 		if (categoryId != -1) {
-			var category = categoryService.findById(categoryId);
-			if (category != null) {
-				product.setCategory(category.get());
-			}
+			product.setCategory(categoryService.findById(categoryId).get());
 		}
+
+		productService.saveProduct(product);
 		return "redirect:/admin/product";
 	}
 
 	@GetMapping("/order")
-	public String order(Model model, @RequestParam(name = "p", defaultValue = "1") int p) {
+	public String order(Model model, @RequestParam(name = "p", defaultValue = "1") int p, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
 		int offset = (p - 1) * sizeOfAdminPage;
@@ -185,22 +211,25 @@ public class AdminController extends BaseController {
 	}
 
 	@GetMapping("/order/{id}")
-	public String detailOrder(Model model, @PathVariable long id) {
+	public String detailOrder(Model model, @PathVariable long id, HttpSession session) {
+
+		String redirect = redirectIfNotLogged(session);
+		if (redirect != null)
+			return redirect;
+
 		addCommonData(model);
 
-		var order = orderService.getOrderById(id);
-
-		model.addAttribute("order", order);
+		model.addAttribute("order", orderService.getOrderById(id));
 		return "/admin/order/order-detail";
 	}
 
 	@PostMapping("/order/update/{id}")
 	public String updateOrder(@RequestParam String newStatus, @PathVariable long id) {
-		var oldOrder = orderService.getOrderById(id);
 
-		oldOrder.setStatus(newStatus);
+		var order = orderService.getOrderById(id);
+		order.setStatus(newStatus);
+		orderService.saveOrder(order);
 
-		orderService.saveOrder(oldOrder);
 		return "redirect:/admin/order";
 	}
 }
