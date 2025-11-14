@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ecommerce.entity.User;
 import ecommerce.service.UserService;
+import ecommerce.utils.PasswordUtil;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -29,9 +30,9 @@ public class AuthController extends BaseController {
             HttpSession session,
             Model model) {
 
-        User user = userService.findByUsernameAndPassword(username, password);
+        User user = userService.findByUsername(username);
 
-        if (user == null) {
+        if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
             return "/auth/login";
         }
 
@@ -48,6 +49,7 @@ public class AuthController extends BaseController {
 
     @GetMapping("/change-password")
     public String changePasswordPage(Model model) {
+        addCommonData(model);
         return "/auth/change-password";
     }
 
@@ -65,7 +67,7 @@ public class AuthController extends BaseController {
             return "redirect:/login";
         }
 
-        if (!user.getPassword().equals(oldPassword)) {
+        if (!PasswordUtil.verify(oldPassword, user.getPassword())) {
             return "/auth/change-password";
         }
 
@@ -73,7 +75,8 @@ public class AuthController extends BaseController {
             return "/auth/change-password";
         }
 
-        user.setPassword(newPassword);
+        String newHashPassword = PasswordUtil.hash(newPassword);
+        user.setPassword(newHashPassword);
         userService.saveUser(user);
 
         return "redirect:/login";
