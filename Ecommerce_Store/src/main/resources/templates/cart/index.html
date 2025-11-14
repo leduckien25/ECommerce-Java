@@ -27,8 +27,8 @@
                         <tbody>
                             <tr th:each="item : ${cart}">
                                 <td>
-                                    <img th:src="${{item.imageUrl}}" th:alt="${product?.productName}"
-                                        class="img-thumbnail" width="50" />
+                                    <img th:src="@{'/uploads/product_image/'+ ${item.imageUrl}}"
+                                        th:alt="${product?.productName}" class="img-thumbnail" width="50" />
                                 </td>
                                 <td th:text="${item.productName}"></td>
                                 <td th:text="${item.quantity}"></td>

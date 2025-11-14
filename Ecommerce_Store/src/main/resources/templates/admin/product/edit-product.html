@@ -28,13 +28,10 @@
 								<div class="mb-3 col">
 									<label>Category</label>
 									<select class="form-control" name="categoryId" required>
-										<!-- Category options -->
 										<option th:each="category : ${allCategoryList}" th:value="${category.id}"
 											th:text="${category.categoryName}"
 											th:selected="${product.category != null and category.id == product.category.id}">
 										</option>
-
-										<!-- Optional 'Other' option -->
 										<option value="-1" th:selected="${product.category == null}">
 											Other
 										</option>
@@ -61,7 +58,8 @@
 								</div>
 
 								<div class="mb-3">
-									<img th:src="${{product.productImage}}" width="110px;" height="90px;">
+									<img th:src="@{'/uploads/product_image/'+ ${product.productImage}}" width="110px;"
+										height="90px;">
 								</div>
 
 							</div>

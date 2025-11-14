@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpSession;
 public class AdminController extends AdminBaseController {
 
 	@GetMapping({ "", "/" })
-	public String admin(Model model, HttpSession session) {
+	public String dashboard(Model model, HttpSession session) {
 
 		String redirect = redirectIfNotLogged(session);
 		if (redirect != null)
@@ -45,8 +45,8 @@ public class AdminController extends AdminBaseController {
 		return "admin/category/category-add-form";
 	}
 
-	@PostMapping("/save-category")
-	public String saveCategory(@ModelAttribute Category category) {
+	@PostMapping("/add-category")
+	public String addCategory(@ModelAttribute Category category) {
 		categoryService.saveCategory(category);
 		return "redirect:/admin/category";
 	}
@@ -71,7 +71,7 @@ public class AdminController extends AdminBaseController {
 	}
 
 	@GetMapping("/edit-category/{id}")
-	public String editCategoryForm(@PathVariable("id") long id, Model model, HttpSession session) {
+	public String updateCategory(@PathVariable("id") long id, Model model, HttpSession session) {
 
 		String redirect = redirectIfNotLogged(session);
 		if (redirect != null)
@@ -107,11 +107,12 @@ public class AdminController extends AdminBaseController {
 			return redirect;
 
 		addCommonData(model);
+		model.addAttribute("allCategoryList", categoryService.findAll());
 		return "/admin/product/add-product";
 	}
 
-	@PostMapping("/save-product")
-	public String saveProduct(@ModelAttribute Product product,
+	@PostMapping("/add-product")
+	public String addProduct(@ModelAttribute Product product,
 			@RequestParam("categoryId") Long categoryId,
 			@RequestParam("file") MultipartFile file) throws IOException {
 
@@ -119,18 +120,20 @@ public class AdminController extends AdminBaseController {
 			product.setCategory(categoryService.findById(categoryId).get());
 		}
 
-		String imageName = file != null ? file.getOriginalFilename() : "default.png";
+		String imageName = null;
+		if (!file.isEmpty()) {
+			imageName = file.getOriginalFilename();
+		}
+
 		product.setProductImage(imageName);
 
-		Product saved = productService.saveProduct(product);
+		productService.saveProduct(product);
 
-		if (!ObjectUtils.isEmpty(saved)) {
-			File savefile = new ClassPathResource("static/img").getFile();
-			Path path = Paths.get(savefile.getAbsolutePath()
-					+ File.separator + "product_image"
-					+ File.separator + imageName);
+		if (!file.isEmpty()) {
+			String uploadDir = System.getProperty("user.dir") + "/uploads/product_image/";
 
-			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			Path filePath = Paths.get(uploadDir + imageName);
+			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 		}
 
 		return "redirect:/admin/product";
@@ -158,9 +161,23 @@ public class AdminController extends AdminBaseController {
 	@GetMapping("/delete-product/{id}")
 	public String deleteProduct(@PathVariable("id") long id, HttpSession session) {
 
-		boolean ok = productService.deleteProduct(id);
-		session.setAttribute(ok ? "successMsg" : "errorMsg",
-				ok ? "Product Deleted Successfully." : "Error deleting product");
+		Product product = productService.getProductById(id);
+
+		if (product != null) {
+
+			String uploadDir = System.getProperty("user.dir") + "/uploads/product_image/";
+			String imageName = product.getProductImage();
+
+			if (imageName != null) {
+				File file = new File(uploadDir + imageName);
+
+				if (file.exists()) {
+					file.delete();
+				}
+			}
+
+			productService.deleteProduct(id);
+		}
 
 		return "redirect:/admin/product";
 	}
@@ -173,7 +190,7 @@ public class AdminController extends AdminBaseController {
 			return redirect;
 
 		addCommonData(model);
-
+		model.addAttribute("allCategoryList", categoryService.findAll());
 		model.addAttribute("product", productService.getProductById(id));
 		return "/admin/product/edit-product";
 	}
@@ -181,13 +198,41 @@ public class AdminController extends AdminBaseController {
 	@PostMapping("/update-product")
 	public String updateProduct(@ModelAttribute Product product,
 			@RequestParam("categoryId") Long categoryId,
-			@RequestParam("file") MultipartFile file) {
+			@RequestParam("file") MultipartFile file) throws IOException {
+
+		Product existingProduct = productService.getProductById(product.getId());
+		if (existingProduct == null) {
+			return "redirect:/admin/product";
+		}
 
 		if (categoryId != -1) {
 			product.setCategory(categoryService.findById(categoryId).get());
 		}
 
+		if (!file.isEmpty()) {
+			String oldImageName = existingProduct.getProductImage();
+
+			String uploadDir = System.getProperty("user.dir") + "/uploads/product_image/";
+
+			if (oldImageName != null) {
+				File oldFile = new File(uploadDir + oldImageName);
+				if (oldFile.exists()) {
+					oldFile.delete();
+				}
+			}
+
+			String newImageName = file.getOriginalFilename();
+
+			Path newPath = Paths.get(uploadDir + newImageName);
+			Files.copy(file.getInputStream(), newPath, StandardCopyOption.REPLACE_EXISTING);
+
+			product.setProductImage(newImageName);
+		} else {
+			product.setProductImage(existingProduct.getProductImage());
+		}
+
 		productService.saveProduct(product);
+
 		return "redirect:/admin/product";
 	}
 
@@ -211,7 +256,7 @@ public class AdminController extends AdminBaseController {
 	}
 
 	@GetMapping("/order/{id}")
-	public String detailOrder(Model model, @PathVariable long id, HttpSession session) {
+	public String orderDetail(Model model, @PathVariable long id, HttpSession session) {
 
 		String redirect = redirectIfNotLogged(session);
 		if (redirect != null)
@@ -223,8 +268,8 @@ public class AdminController extends AdminBaseController {
 		return "/admin/order/order-detail";
 	}
 
-	@PostMapping("/order/update/{id}")
-	public String updateOrder(@RequestParam String newStatus, @PathVariable long id) {
+	@PostMapping("/order/update-order")
+	public String updateOrder(@RequestParam String newStatus, @RequestParam long id) {
 
 		var order = orderService.getOrderById(id);
 		order.setStatus(newStatus);

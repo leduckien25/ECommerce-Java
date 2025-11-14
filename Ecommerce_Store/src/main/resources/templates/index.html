@@ -31,7 +31,8 @@
 			<div class="col-md-3" th:each="product: ${latestEightActiveProducts}">
 				<div class="card shadow-sm p-3 mb-5 bg-white rounded">
 					<div class="card-body text-center">
-						<img alt="" th:src="${{product.productImage}}" width="60%" height="140px">
+						<img alt="" th:src="@{'/uploads/product_image/'+ ${product.productImage}}" width="60%"
+							height="140px">
 						<a th:href="@{'/product/'+${product.id}}" class="text-decoration-none">
 							<p class="text-center"><b>[[${product.productName}]]</b></p>
 						</a>

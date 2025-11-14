@@ -5,7 +5,7 @@
 	<div class="container-fluid p-5">
 		<div class="row">
 			<div class="col-md-4">
-				<a th:href="@{'/admin/add-product'}" class="btn btn-primary mb-3">Add Product</a>
+				<a href="/admin/add-product" class="btn btn-primary mb-3">Add Product</a>
 			</div>
 		</div>
 		<div class="row">
@@ -29,7 +29,8 @@
 							<tbody>
 								<tr th:each="product : ${productList}">
 									<td scope="row" th:text="${product.id}"></td>
-									<td><img th:src="${{product.productImage}}" width="50px;" height="50px;"></td>
+									<td><img th:src="@{'/uploads/product_image/'+ ${product.productImage}}"
+											width="50px;" height="50px;"></td>
 									<td>[[${product.productName}]]</td>
 									<td
 										th:text="${product.category != null ? product.category.categoryName : 'No Category'}">
