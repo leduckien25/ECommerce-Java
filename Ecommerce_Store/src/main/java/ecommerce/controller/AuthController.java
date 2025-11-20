@@ -30,6 +30,8 @@ public class AuthController extends BaseController {
             HttpSession session,
             Model model) {
 
+        addCommonData(model);
+
         User user = userService.findByUsername(username);
 
         if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
@@ -80,6 +82,15 @@ public class AuthController extends BaseController {
         userService.saveUser(user);
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(HttpSession session,
+            Model model) {
+        addCommonData(model);
+
+        return "/auth/forgot-password";
+
     }
 
 }

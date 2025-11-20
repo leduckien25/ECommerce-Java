@@ -32,22 +32,28 @@
 					<div class="card-body">
 						<div class="row">
 							<th:block th:if="${allProducts.size > 0}">
-								<div class="col-md-3" th:each="product : ${allProducts}">
-									<div class="card">
-										<div class="card-body">
-											<img alt="product_image"
-												th:src="@{'/uploads/product_image/'+ ${product.productImage}}"
-												width="100%" height="150px">
-											<p class="fs-5 text-center">[[${product.productName}]]</p>
-
-											<div class="row text-center">
-												<p class="fs-6 fw-bold">
-													<span class="text-secondary">
-														$[[${product.productPrice}]]</span>
-												</p>
-												<a th:href="@{'/product/'+${product.id}}"
-													class="btn btn-danger col-md-6 offset-md-3 ">Details</a>
+								<div class="col-md-3 mb-3" th:each="product : ${allProducts}">
+									<div class="card"
+										style="width: 100%; max-width: 300px; height: 350px; display: flex; flex-direction: column;">
+										<div class="card-body d-flex flex-column text-center" style="padding: 1rem;">
+											<div
+												style="height: 150px; overflow: hidden; border-radius: 8px; margin-bottom: 0.5rem;">
+												<img th:src="@{'/uploads/product_image/'+ ${product.productImage}}"
+													alt="product_image"
+													style="width: 100%; height: 100%; object-fit: cover; display: block;">
 											</div>
+
+											<p class="fs-5" style="flex-grow: 1; margin: 0.5rem 0;">
+												<b>[[${product.productName}]]</b>
+											</p>
+
+											<p class="fs-6 fw-bold text-secondary" style="margin: 0.5rem 0;">
+												$[[${product.productPrice}]]</p>
+
+											<a th:href="@{'/product/'+${product.id}}" class="btn btn-danger mt-auto"
+												style="margin-top: auto;">
+												Details
+											</a>
 										</div>
 									</div>
 								</div>
