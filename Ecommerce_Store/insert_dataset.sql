@@ -1,7 +1,7 @@
 USE ecommerce_store;
 
 INSERT INTO `user` VALUES
-(1, '$2a$10$LErpTQS8ob/0VpM8i/Myo.KDOKyGmj93MF8jfvn70JjdGZMZNd2.G', 'admin');
+(1, 'admin', '$2a$10$LErpTQS8ob/0VpM8i/Myo.KDOKyGmj93MF8jfvn70JjdGZMZNd2.G');
 
 INSERT INTO category (id, category_name, category_description) VALUES 
 (1, 'Sandwiches', 'Bánh mì kẹp và các loại Sub'),
