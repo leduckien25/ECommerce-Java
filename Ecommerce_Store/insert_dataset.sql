@@ -181,8 +181,6 @@ VALUES ('Lays® Classic', 2.45, 'store_0_Lays_Classic_38.jpg', 200, 'Khoai tây 
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('SunChips® Harvest Cheddar®', 2.32, 'store_0_SunChips_Harvest_Cheddar_39.jpg', 180, 'Snack ngũ cốc SunChips vị phô mai Cheddar.', 13);
 
-USE ecommerce_store;
-
 -- 41. Miss Vickie’s® Jalapeño (Snacks)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('Miss Vickie’s® Jalapeño', 2.45, 'store_0_Miss_Vickies_Jalapeño_40.jpg', 150, 'Khoai tây chiên giòn vị ớt Jalapeño cay nồng.', 13);
@@ -342,8 +340,6 @@ VALUES ('Cantina Chicken Bowl', 11.70, 'store_1_Cantina_Chicken_Bowl_1.jpg', 40,
 -- 80. Cantina Chicken Crispy Taco Meal (Tacos)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('Cantina Chicken Crispy Taco Meal', 11.70, 'store_1_Cantina_Chicken_Crispy_Taco_Meal_2.jpg', 45, 'Combo Taco gà vỏ giòn tan kèm nước uống.', 5);
-
-USE ecommerce_store;
 
 -- 81. Cantina Chicken Burrito Meal (Burritos)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
@@ -505,8 +501,6 @@ VALUES ('Mango Peach Agua Refresca - Medium', 4.87, 'store_1_Mango_Peach_Agua_Re
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('Tropical Punch Rockstar® Energy Refresca - Medium', 5.48, 'store_1_Tropical_Punch_Rockstar_Energy_Refresca_-_Medium_50.jpg', 50, 'Nước tăng lực Rockstar vị trái cây nhiệt đới.', 15);
 
-USE ecommerce_store;
-
 -- 121. Tropicana® Original Lemonade (Drinks)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('Tropicana® Original Lemonade', 3.04, 'store_1_Tropicana_Original_Lemonade_52.jpg', 80, 'Nước chanh Tropicana nguyên chất tươi mát.', 15);
@@ -666,8 +660,6 @@ VALUES ('Medium Vanilla Cappuccino', 3.79, 'store_2_Medium_Vanilla_Cappuccino_38
 -- 160. Medium Caramel Cappuccino (Drinks)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
 VALUES ('Medium Caramel Cappuccino', 3.79, 'store_2_Medium_Caramel_Cappuccino_39.jpg', 50, 'Cappuccino nóng kết hợp sốt caramel béo ngậy.', 15);
-
-USE ecommerce_store;
 
 -- 161. Medium Americano (Drinks)
 INSERT INTO product (product_name, product_price, product_image, product_stock, product_description, category_id) 
